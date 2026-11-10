@@ -17,6 +17,18 @@ abra **Actions > CI > Run workflow**, selecione `main` e mantenha
 baixe o artefato `jadyx-package`, que contém o APPX, a dependência VCLibs e o
 certificado público. Certificados privados e senhas nunca devem ser publicados.
 
+Para disponibilizar os arquivos na página **Releases**, abra **Actions > Release >
+Run workflow**, selecione `main` e informe `0.3.12.1` em **version** para a primeira
+publicação. O workflow compila, assina e publica o APPX e suas dependências quando
+todas as etapas terminarem com sucesso. A opção **prerelease** marca a versão como
+teste. Nas próximas versões, atualize primeiro a versão do manifesto e a lista do
+formulário de bugs com o comando abaixo, publique essas alterações e execute o
+workflow com a mesma versão:
+
+```powershell
+python tools/xbox/release.py bump NOVA_VERSAO --manifest dist/uwp/AppxManifest.xml --issue-template .github/ISSUE_TEMPLATE/bug_report.yml
+```
+
 No Xbox em Dev Mode, instale o APPX e a dependência pelo Device Portal e selecione
 o tipo **Game** nos detalhes do aplicativo.
 

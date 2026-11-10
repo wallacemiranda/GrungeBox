@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Publishes a release: Actions -> Release -> Run workflow (on main) with a version like 0.3.0.
-# It requires the committed version, builds/signs the appx and metadata, then creates a draft
+# It requires the committed version, builds/signs the appx, then creates a draft
 # at that exact commit before publishing. It never creates commits or overwrites release assets.
 
 name: Release
@@ -39,9 +39,9 @@ jobs:
       tag: ${{ steps.check.outputs.tag }}
     steps:
       - name: Only from main
-        if: github.ref != 'refs/heads/main' || github.repository != 'JulianDr14/jadyx'
+        if: github.ref != 'refs/heads/main' || github.repository != 'wallacemiranda/GrungeBox'
         run: |
-          echo "::error::Releases are made from main, not ${GITHUB_REF_NAME}"
+          echo "::error::Releases must run from main in wallacemiranda/GrungeBox"
           exit 1
 
       - uses: actions/checkout@v7
@@ -98,23 +98,9 @@ jobs:
           name: jadyx-package
           path: out
 
-      - name: Sign update metadata
-        shell: pwsh
-        env:
-          JADYX_PFX_BASE64: ${{ secrets.JADYX_PFX_BASE64 }}
-          JADYX_PFX_PASSWORD: ${{ secrets.JADYX_PFX_PASSWORD }}
-        run: |
-          $pfx = Join-Path $env:RUNNER_TEMP "update-signing.pfx"
-          try {
-              [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:JADYX_PFX_BASE64))
-              $channel = if ($env:PRERELEASE -eq 'true') { 'preview' } else { 'stable' }
-              & tools/xbox/create-update.ps1 -Package "out/Jadyx_$($env:PACKAGE_VERSION)_x64.appx" -OutputDirectory out -Channel $channel -Notes $env:HIGHLIGHTS -PfxPath $pfx
-          } finally { if (Test-Path -LiteralPath $pfx) { Remove-Item -LiteralPath $pfx -Force } }
-
-      - name: Include update metadata in checksums
-        run: |
-          (cd out && find . -maxdepth 1 -type f ! -name SHA256SUMS.txt -printf '%f\n' | LC_ALL=C sort | xargs sha256sum) > "$RUNNER_TEMP/SHA256SUMS.txt"
-          mv "$RUNNER_TEMP/SHA256SUMS.txt" out/SHA256SUMS.txt
+      # Publish the fork's signed installer and checksums. The upstream updater metadata
+      # requires Jadyx's pinned distribution key and points to its upstream release URLs.
+      # Lichii releases are installed manually and do not publish upstream update metadata.
 
       - name: Record release source
         run: |
@@ -132,20 +118,21 @@ jobs:
               python3 tools/xbox/release.py notes --tag "$TAG" --previous "$PREVIOUS" --repo "$GITHUB_REPOSITORY"
               cat <<EOF
 
-          ## Install
+          ## Install GrungeBox / Lichii XBOX
 
           You need an Xbox Series X|S in Dev Mode. No keys, firmware or games are included: use your
           own dumps.
 
           1. Download \`Jadyx_${PACKAGE_VERSION}_x64.appx\` and \`Microsoft.VCLibs.x64.14.00.appx\`
-             from the assets below. Since Jadyx 0.3.9.0, no separate .cer upload is required.
+             from the assets below. The package also includes \`Jadyx.cer\` if the console needs
+             to trust this fork's signing certificate.
           2. On a PC on the same network, open Device Portal at \`https://<xbox-ip>:11443\` (Dev Home
              shows the address) and accept the browser's certificate warning.
           3. Choose **Add**, pick the Jadyx appx, add the VCLibs appx as a dependency if a compatible
              version is not already installed, and install.
-          4. In Dev Home, select Jadyx → **View details** and set **App type** to **Game**. In App mode
+          4. In Dev Home, select Lichii XBOX → **View details** and set **App type** to **Game**. In App mode
              it runs out of memory.
-          5. Start Jadyx and send your keys, firmware and games from a PC or phone with the
+          5. Start Lichii XBOX and send your keys, firmware and games from a PC or phone with the
              **Jadyx Portal**: **Settings → File manager → Network connection → Start server**, open
              the address it shows in a browser on the same network and enter the connection code.
           6. Other ways: import keys and firmware from a folder or ZIP on a USB drive in
@@ -180,49 +167,19 @@ jobs:
       - name: Publish
         run: |
           version="${TAG#v}"
-          title="Jadyx $version"
+          title="GrungeBox / Lichii XBOX $version"
           if [ "${version%%.*}" = "0" ]; then title="$title Beta"; fi
           flags=(--latest)
           if [ "$PRERELEASE" = "true" ]; then flags=(--prerelease --latest=false); fi
           draft_flags=()
           if [ "$PRERELEASE" = "true" ]; then draft_flags=(--prerelease); fi
-          gh release create "$TAG" out/* --repo JulianDr14/jadyx --verify-tag --draft --title "$title" --notes-file "$RUNNER_TEMP/notes.md" \
+          gh release create "$TAG" out/* --repo "$GITHUB_REPOSITORY" --verify-tag --draft --title "$title" --notes-file "$RUNNER_TEMP/notes.md" \
               "${draft_flags[@]}"
-          test "$(gh api 'repos/JulianDr14/jadyx/git/ref/tags/'"$TAG" --jq .object.sha)" = "$GITHUB_SHA"
-          mkdir -p "$RUNNER_TEMP/update-verify"
-          gh release download "$TAG" --repo JulianDr14/jadyx -p update.json -p update.sig -p "Jadyx_${PACKAGE_VERSION}_x64.appx" --dir "$RUNNER_TEMP/update-verify"
-          for file in update.json update.sig "Jadyx_${PACKAGE_VERSION}_x64.appx"; do
-              cmp "out/$file" "$RUNNER_TEMP/update-verify/$file"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq .object.sha)" = "$GITHUB_SHA"
+          mkdir -p "$RUNNER_TEMP/release-verify"
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" -p "Jadyx_${PACKAGE_VERSION}_x64.appx" -p SHA256SUMS.txt --dir "$RUNNER_TEMP/release-verify"
+          for file in "Jadyx_${PACKAGE_VERSION}_x64.appx" SHA256SUMS.txt; do
+              cmp "out/$file" "$RUNNER_TEMP/release-verify/$file"
           done
-          gh release edit "$TAG" --repo JulianDr14/jadyx --draft=false "${flags[@]}"
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false "${flags[@]}"
           echo "TITLE=$title" >> "$GITHUB_ENV"
-
-      # The release is already out, so a Discord failure only warns. Pings Release Ping only for
-      # full releases, not pre-releases.
-      # Disabled: releases are announced on Discord by hand. Remove `if: false` to re-enable.
-      - name: Announce on Discord
-        if: false
-        continue-on-error: true
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASES_WEBHOOK }}
-          DISCORD_ROLE: ${{ vars.DISCORD_RELEASE_ROLE }}
-        run: |
-          if [ -z "$DISCORD_WEBHOOK" ]; then echo "No DISCORD_RELEASES_WEBHOOK secret; skipping"; exit 0; fi
-          python3 - > "$RUNNER_TEMP/discord.json" <<'PY'
-          import json, os
-          env = os.environ
-          url = f"https://github.com/{env['GITHUB_REPOSITORY']}/releases/tag/{env['TAG']}"
-          ping = env.get("DISCORD_ROLE") if env["PRERELEASE"] != "true" else ""
-          text = env.get("HIGHLIGHTS") or "A new build is out."
-          print(json.dumps({
-              "content": f"<@&{ping}>" if ping else "",
-              "allowed_mentions": {"roles": [ping] if ping else []},
-              "embeds": [{
-                  "title": env["TITLE"] + (" (pre-release)" if env["PRERELEASE"] == "true" else ""),
-                  "url": url,
-                  "description": text[:3500] + f"\n\n**Download and install:** {url}",
-                  "color": 0x0078D4,
-              }],
-          }))
-          PY
-          curl -fsS -H "Content-Type: application/json" --data @"$RUNNER_TEMP/discord.json" "$DISCORD_WEBHOOK"

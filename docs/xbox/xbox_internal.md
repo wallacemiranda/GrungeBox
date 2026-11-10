@@ -1,5 +1,16 @@
 # Jadyx: notas internas
 
+## GrungeBox: publicación de instaladores (10 noviembre 2026)
+
+En `wallacemiranda/GrungeBox`, el workflow `Release` se ejecuta manualmente desde
+`main` con la versión exacta del manifiesto (primera entrega: `0.3.12.1`). Compila
+y firma el APPX con los secrets del fork, crea el tag y un borrador, verifica el
+APPX y los checksums descargados y publica los assets en ese mismo repositorio.
+`CI` sigue entregando artefactos y no crea releases. El guard del repositorio y
+todos los comandos de publicación se adaptaron para no escribir en el upstream.
+No se generan metadatos del actualizador oficial: esa herramienta fija la clave
+y las URLs de distribución de Jadyx; la instalación del fork es manual.
+
 Cuaderno de trabajo del port: cómo compilar, en qué fase vamos y lo que hemos aprendido por las malas.
 Los docs "de verdad" son [`uwp_build.md`](uwp_build.md) (toolchain) y [`xbox_deploy.md`](xbox_deploy.md)
 (empaquetar y desplegar). Aquí va el resumen rápido y todo lo que no cabe en ellos.
