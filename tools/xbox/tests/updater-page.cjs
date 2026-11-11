@@ -85,7 +85,7 @@ function load(language, mode) {
 
       assert.equal($('update-go').disabled, false);
       assert.equal($('update-badge').hidden, false);
-      assert.equal($('update-title').textContent, 'Jadyx 0.3.6.0');
+      assert.equal($('update-title').textContent, 'GrungeBOX 0.3.6.0');
       assert.equal($('update-meta').textContent, 'Jadyx_0.3.6.0_x64.appx · 1234 B');
       assert.equal($('update-step-2').className, 'now');
 
