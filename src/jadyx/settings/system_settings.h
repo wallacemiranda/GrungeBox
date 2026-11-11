@@ -22,7 +22,7 @@ namespace Jadyx {
 
 /// The Switch shows user names of up to 10 characters; games lay them out for that.
 inline constexpr std::size_t MaxUserNameLength = 10;
-inline constexpr std::wstring_view DefaultUserName = L"Jadyx";
+inline constexpr std::wstring_view DefaultUserName = L"GrungeBOX";
 
 struct SystemSettings {
     std::wstring ui_language;                         ///< BCP 47 tag; empty follows the system.

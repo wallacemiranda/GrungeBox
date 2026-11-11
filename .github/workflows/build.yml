@@ -272,10 +272,10 @@ jobs:
           [xml]$mf = Get-Content build-uwp\package\layout\AppxManifest.xml -Raw
           $version = $mf.Package.Identity.Version
           $out = New-Item -ItemType Directory -Force out
-          Copy-Item build-uwp\package\jadyx.appx "out\Jadyx_${version}_x64.appx"
-          Copy-Item build-uwp\package\jadyx.cer out\Jadyx.cer
+          Copy-Item build-uwp\package\jadyx.appx "out\GrungeBOX_${version}_x64.appx"
+          Copy-Item build-uwp\package\jadyx.cer out\GrungeBOX.cer
           Copy-Item build-uwp\package\Microsoft.VCLibs.x64.14.00.appx out\
-          Compress-Archive build-uwp\bin\jadyx.pdb "out\Jadyx_${version}_symbols.zip"
+          Compress-Archive build-uwp\bin\jadyx.pdb "out\GrungeBOX_${version}_symbols.zip"
           [ordered]@{
               version = $version
               commit  = $env:GITHUB_SHA

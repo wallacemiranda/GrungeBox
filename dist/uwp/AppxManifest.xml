@@ -17,12 +17,12 @@
 
   <Identity Name="Jadyx"
             Publisher="CN=JadyxDev"
-            Version="0.3.12.1"
+            Version="0.3.12.2"
             ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>Lichii XBOX</DisplayName>
-    <PublisherDisplayName>Lichii XBOX</PublisherDisplayName>
+    <DisplayName>GrungeBOX</DisplayName>
+    <PublisherDisplayName>GrungeBOX</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -52,14 +52,14 @@
          uwp_boot.cpp) is the conventional "<exe>.App" moniker; there is no activatable class. -->
     <Application Id="App" Executable="jadyx.exe" EntryPoint="Jadyx.App">
       <uap:VisualElements
-          DisplayName="Lichii XBOX"
-          Description="Lichii XBOX: Jadyx (Eden) for Xbox Series X|S Dev Mode with the Lichii Graphite look."
-          BackgroundColor="#111113"
+          DisplayName="GrungeBOX"
+          Description="GrungeBOX: Switch emulation for Xbox Series X|S Dev Mode, based on Jadyx (Eden)."
+          BackgroundColor="#0B0616"
           Square150x150Logo="Assets\Square150x150Logo.png"
           Square44x44Logo="Assets\Square44x44Logo.png">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
         <!-- The splash art is transparent: this colour fills the whole screen behind it. -->
-        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#000000" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#050309" />
       </uap:VisualElements>
     </Application>
   </Applications>

@@ -369,7 +369,7 @@ struct GameMenuSurface::Impl : UiPainter {
         Type(renderer, TypeRole::LabelLarge, x + 38 + clock_width + 25, S::Pill + 6, renderer_width + 2,
              Palette::TextSecondary);
 
-        std::wstring caption = L"Jadyx";
+        std::wstring caption = L"GrungeBOX";
         if (!version_text.empty()) caption += L" " + version_text;
         Type(Upper(caption + L" · Direct3D 12"), TypeRole::Caps, S::Left, S::Caption + 8, 480,
              Palette::TextSecondary);

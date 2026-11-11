@@ -184,7 +184,7 @@ void UiPainter::FocusGlow(float x, float y, float w, float h, float radius, floa
         Round(x - spread + 4, y + 6 - spread + 4, w + 2 * spread - 8, h + 2 * spread - 8,
               radius + spread, 0, 0.12f * amount);
     }
-    // The halo: Lichii violet fading over 24 px, then a 2 px violet ring.
+    // The halo: GrungeBOX violet fading over 24 px, then a 2 px violet ring.
     for (int i = 0; i < 4; ++i) {
         const float spread = 3.0f + i * 5.0f;
         Outline(x - spread, y - spread, w + 2 * spread, h + 2 * spread, radius + spread,
@@ -211,7 +211,7 @@ float UiPainter::PillButton(std::wstring_view label, std::wstring_view letters, 
                             float x, float y, bool primary, float height) {
     const float text = MeasureType(label, TypeRole::BodyLarge);
     const float width = PillWidth(label, letters);
-    // Lichii buttons: rounded rectangles, the primary one filled with the violet accent.
+    // GrungeBOX buttons: rounded rectangles, the primary one filled with the violet accent.
     const float corner = std::min(height / 2, 10.0f);
     if (primary) {
         Round(x - 2, y + 2, width + 4, height + 4, corner + 2, Palette::Accent, 0.12f);
@@ -471,7 +471,7 @@ void UiPainter::ManagementSurface(float x, float y, float w, float h, float foot
 }
 
 void UiPainter::RowFrame(float x, float y, float width, float height, bool active, UiIcon icon) {
-    // Idle rows sit flush with a hairline under them; the focused one takes Lichii's violet
+    // Idle rows sit flush with a hairline under them; the focused one takes GrungeBOX's violet
     // selection with an accent bar on its leading edge.
     if (active) {
         const float grow = width * 0.005f;

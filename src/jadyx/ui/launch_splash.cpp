@@ -70,7 +70,7 @@ constexpr float TrackOuter = 63.5f, TrackInner = 30.8f;
 /// The snake: one lap of the track (6 sides) every LapSeconds, its length breathing between
 /// about 1.75 and 3.75 sides. Each side keeps its own shade, so the body seems to turn in light.
 constexpr float LapSeconds = 1.8f, BreathSeconds = 2.7f;
-constexpr std::array<unsigned, 6> SideShades{0xd9cdfd, 0x8f72ee, 0x6f55c9, 0x7a5fd8, 0xa78bfa, 0xc4b1fc};
+constexpr std::array<unsigned, 6> SideShades{0xe2b8ff, 0x9333ea, 0x7e22ce, 0x8b2ff0, 0xa855f7, 0xc084fc};
 
 std::atomic<Clock::rep> opened{};
 std::atomic<LaunchStep> step{LaunchStep::Loading};
@@ -216,9 +216,9 @@ private:
         logo_pixels = 0;
         target->GetFactory(&factory);
         winrt::check_hresult(target->CreateSolidColorBrush(D2D1::ColorF(0xffffff), &brush));
-        background = Gradient(target, 0x18181b, 0x0c0c0e, {0, 0}, {0, 1});
-        dark = Gradient(target, 0x1f1f24, 0x111113, {HexX, -25.61f}, {HexX, 283.88f});
-        light = Gradient(target, 0xc4b1fc, 0xa78bfa, {HexX, 21.37f}, {HexX, 255.52f});
+        background = Gradient(target, 0x150f22, 0x07050c, {0, 0}, {0, 1});
+        dark = Gradient(target, 0x1d1629, 0x0e0a16, {HexX, -25.61f}, {HexX, 283.88f});
+        light = Gradient(target, 0xc084fc, 0xa855f7, {HexX, 21.37f}, {HexX, 255.52f});
         frame = Hexagons(FrameRadius, 8, 0, 0);
         ring = Hexagons(RingOuter, 7, RingInner, 7);
         track = Hexagons(TrackOuter, 0, TrackInner, 0);
@@ -290,10 +290,10 @@ private:
                              D2D1::RectF(at.changing.left, top, right, top + 2 * size), brush.Get());
         }
         if (progress < 0) return;
-        brush->SetColor(D2D1::ColorF(0x2a2a30));
+        brush->SetColor(D2D1::ColorF(0x2a2338));
         target->FillRoundedRectangle(D2D1::RoundedRect(D2D1::RectF(x, y, right, y + h), r, r), brush.Get());
         if (const float filled = width * std::min(progress, 1.0f); filled > 0.5f) {
-            brush->SetColor(D2D1::ColorF(0xa78bfa));
+            brush->SetColor(D2D1::ColorF(0xa855f7));
             target->FillRoundedRectangle(D2D1::RoundedRect(D2D1::RectF(x, y, x + filled, y + h), r, r),
                                          brush.Get());
         }

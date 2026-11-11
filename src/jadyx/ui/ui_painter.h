@@ -22,23 +22,23 @@
 
 namespace Jadyx {
 
-/// The frontend's colors (0xRRGGBB): the Lichii "Graphite" palette. Near-black chrome, one
-/// violet accent for focus, selection and "on"; everything else stays neutral.
+/// The frontend's colors (0xRRGGBB): the GrungeBOX palette, taken from its logo. Violet-black
+/// chrome, one neon-violet accent for focus, selection and "on"; everything else stays neutral.
 namespace Palette {
-inline constexpr unsigned Canvas = 0x0c0c0e;   ///< The base layer, behind everything (the rail).
-inline constexpr unsigned Surface = 0x1b1b1f;  ///< Cards, panels and dialogs.
-inline constexpr unsigned Graphite = 0x2a2a30; ///< Hairlines, dividers, tracks, badges.
-inline constexpr unsigned Backdrop = 0x111113; ///< Page background (Lichii's home).
+inline constexpr unsigned Canvas = 0x09060f;   ///< The base layer, behind everything (the rail).
+inline constexpr unsigned Surface = 0x1a1524;  ///< Cards, panels and dialogs.
+inline constexpr unsigned Graphite = 0x2a2338; ///< Hairlines, dividers, tracks, badges.
+inline constexpr unsigned Backdrop = 0x0e0a16; ///< Page background (the logo's violet-black).
 inline constexpr unsigned Panel = Surface;
-inline constexpr unsigned Row = 0x18181b;
-/// The focused row: Lichii's violet-tinted selection.
-inline constexpr unsigned RowActive = 0x2b2640;
+inline constexpr unsigned Row = 0x16121f;
+/// The focused row: GrungeBOX's violet-tinted selection.
+inline constexpr unsigned RowActive = 0x2e1f4a;
 inline constexpr unsigned Selection = RowActive;
-/// Focus and "on": the violet accent, with deep violet on top of it.
-inline constexpr unsigned Accent = 0xa78bfa;
-inline constexpr unsigned AccentHover = 0xb59dfb;
-inline constexpr unsigned AccentPressed = 0x9a7cf5;
-inline constexpr unsigned OnAccent = 0x1c1433;
+/// Focus and "on": the logo's neon violet, with deep violet on top of it.
+inline constexpr unsigned Accent = 0xa855f7;
+inline constexpr unsigned AccentHover = 0xb975f9;
+inline constexpr unsigned AccentPressed = 0x9333ea;
+inline constexpr unsigned OnAccent = 0x14082a;
 inline constexpr unsigned Text = 0xececf1;
 inline constexpr unsigned TextSecondary = 0x9a9aa8;
 inline constexpr unsigned TextHint = 0xc9c9d3;

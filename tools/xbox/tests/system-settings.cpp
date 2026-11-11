@@ -77,7 +77,7 @@ int main() {
     SystemPage page;
     page.open = true;
     page.locale = locale(L"es-CO", L"CO");
-    check(SystemRowValue(page, SystemPage::UserName) == L"Jadyx");
+    check(SystemRowValue(page, SystemPage::UserName) == L"GrungeBOX");
     check(SystemRowValue(page, SystemPage::InterfaceLanguage) == L"Automático · Español");
     check(SystemRowValue(page, SystemPage::GameLanguage) == L"Automático · Español (Latinoamérica)");
     check(SystemRowValue(page, SystemPage::Region) == L"Automático · América");

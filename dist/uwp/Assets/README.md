@@ -1,11 +1,14 @@
 # Brand assets
 
-The Jadyx logo, wordmark, tiles and splash screen are by
-[@dramon8945](https://www.instagram.com/dramon8945/):
+The GrungeBOX logo, wordmark, tiles, splash screen and launch logo:
 
-- `JadyxLogo.svg`, `JadyxLogo.png`, `JadyxWordmark.png`
+- `GrungeBoxLogo.png`, `GrungeBoxWordmark.png`, `LaunchLogo.png`
 - `Square150x150Logo.scale-200.png`, `Square44x44Logo.scale-200.png`, `StoreLogo.scale-200.png`
 - `Wide310x150Logo.scale-200.png`, `SplashScreen.scale-200.png`
+
+`src/jadyx/storage/network_portal_logo.h` embeds the bytes of `Square150x150Logo.scale-200.png`
+for the web portal. Regenerate it after changing that file; `tools/xbox/tests/network-portal-page.cjs`
+fails when the two differ.
 
 The `.scale-200` suffix is the file's real size (200% of the base size the manifest names);
 `tools/xbox/package-appx.ps1` builds the `resources.pri` that maps one to the other.

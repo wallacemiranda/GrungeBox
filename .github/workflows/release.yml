@@ -100,7 +100,7 @@ jobs:
 
       # Publish the fork's signed installer and checksums. The upstream updater metadata
       # requires Jadyx's pinned distribution key and points to its upstream release URLs.
-      # Lichii releases are installed manually and do not publish upstream update metadata.
+      # GrungeBOX releases are installed manually and do not publish upstream update metadata.
 
       - name: Record release source
         run: |
@@ -118,22 +118,22 @@ jobs:
               python3 tools/xbox/release.py notes --tag "$TAG" --previous "$PREVIOUS" --repo "$GITHUB_REPOSITORY"
               cat <<EOF
 
-          ## Install GrungeBox / Lichii XBOX
+          ## Install GrungeBOX
 
           You need an Xbox Series X|S in Dev Mode. No keys, firmware or games are included: use your
           own dumps.
 
-          1. Download \`Jadyx_${PACKAGE_VERSION}_x64.appx\` and \`Microsoft.VCLibs.x64.14.00.appx\`
-             from the assets below. The package also includes \`Jadyx.cer\` if the console needs
+          1. Download \`GrungeBOX_${PACKAGE_VERSION}_x64.appx\` and \`Microsoft.VCLibs.x64.14.00.appx\`
+             from the assets below. The package also includes \`GrungeBOX.cer\` if the console needs
              to trust this fork's signing certificate.
           2. On a PC on the same network, open Device Portal at \`https://<xbox-ip>:11443\` (Dev Home
              shows the address) and accept the browser's certificate warning.
-          3. Choose **Add**, pick the Jadyx appx, add the VCLibs appx as a dependency if a compatible
+          3. Choose **Add**, pick the GrungeBOX appx, add the VCLibs appx as a dependency if a compatible
              version is not already installed, and install.
-          4. In Dev Home, select Lichii XBOX → **View details** and set **App type** to **Game**. In App mode
+          4. In Dev Home, select GrungeBOX → **View details** and set **App type** to **Game**. In App mode
              it runs out of memory.
-          5. Start Lichii XBOX and send your keys, firmware and games from a PC or phone with the
-             **Jadyx Portal**: **Settings → File manager → Network connection → Start server**, open
+          5. Start GrungeBOX and send your keys, firmware and games from a PC or phone with the
+             **GrungeBOX Portal**: **Settings → File manager → Network connection → Start server**, open
              the address it shows in a browser on the same network and enter the connection code.
           6. Other ways: import keys and firmware from a folder or ZIP on a USB drive in
              **Settings → File manager**, and add games from an external folder or USB drive, or copy
@@ -147,7 +147,7 @@ jobs:
           Open an issue at https://github.com/${GITHUB_REPOSITORY}/issues/new/choose with the **Bug
           Report** form. A good report has:
 
-          - The Jadyx version (\`${TAG#v}\`) and whether it is a Series X or S, in Game mode.
+          - The GrungeBOX version (\`${TAG#v}\`) and whether it is a Series X or S, in Game mode.
           - What you did, what you expected and what happened instead, with the steps to make it
             happen again.
           - The logs from the app's \`LocalState\jadyx\log\` folder (Device Portal → **File
@@ -167,7 +167,7 @@ jobs:
       - name: Publish
         run: |
           version="${TAG#v}"
-          title="GrungeBox / Lichii XBOX $version"
+          title="GrungeBOX $version"
           if [ "${version%%.*}" = "0" ]; then title="$title Beta"; fi
           flags=(--latest)
           if [ "$PRERELEASE" = "true" ]; then flags=(--prerelease --latest=false); fi
@@ -177,8 +177,8 @@ jobs:
               "${draft_flags[@]}"
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq .object.sha)" = "$GITHUB_SHA"
           mkdir -p "$RUNNER_TEMP/release-verify"
-          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" -p "Jadyx_${PACKAGE_VERSION}_x64.appx" -p SHA256SUMS.txt --dir "$RUNNER_TEMP/release-verify"
-          for file in "Jadyx_${PACKAGE_VERSION}_x64.appx" SHA256SUMS.txt; do
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" -p "GrungeBOX_${PACKAGE_VERSION}_x64.appx" -p SHA256SUMS.txt --dir "$RUNNER_TEMP/release-verify"
+          for file in "GrungeBOX_${PACKAGE_VERSION}_x64.appx" SHA256SUMS.txt; do
               cmp "out/$file" "$RUNNER_TEMP/release-verify/$file"
           done
           gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false "${flags[@]}"

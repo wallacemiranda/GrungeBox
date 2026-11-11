@@ -236,7 +236,7 @@ Runtime ProductionRuntime() {
             winrt::Windows::Storage::ApplicationData::Current().LocalFolder().Path().c_str()} /
         "updates";
     runtime.public_key = ReleasePublicKey;
-    // Lichii XBOX: official Jadyx releases would replace this restyled build, so the app never
+    // GrungeBOX: official Jadyx releases would replace this restyled build, so the app never
     // checks on its own; System > Updates can still check when asked.
     runtime.automatic_check = false;
     runtime.fetch = Http::Fetch;
