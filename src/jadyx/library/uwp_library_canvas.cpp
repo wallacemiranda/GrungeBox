@@ -508,8 +508,11 @@ private:
     /// The wordmark; the tabs in the middle; the controller, the time and the user at the right.
     void DrawHeader(const LibraryView& view, Tween::Clock::time_point now) {
         using namespace LibraryLayout;
-        Type(L"J A D Y X", TypeRole::HeadlineSmall, Margin, HeaderTop + 6, 200, Palette::Text);
-        const float mark = Margin + MeasureType(L"J A D Y X", TypeRole::HeadlineSmall) + 14;
+        // The GrungeBOX wordmark: "GRUNGE" in white, "BOX" in the logo's violet.
+        const float grunge = MeasureType(L"GRUNGE", TypeRole::HeadlineSmall);
+        Type(L"GRUNGE", TypeRole::HeadlineSmall, Margin, HeaderTop + 6, grunge + 4, Palette::Text);
+        Type(L"BOX", TypeRole::HeadlineSmall, Margin + grunge + 1, HeaderTop + 6, 120, Palette::Accent);
+        const float mark = Margin + grunge + 1 + MeasureType(L"BOX", TypeRole::HeadlineSmall) + 14;
         Type(view.panel.xbox ? L"SERIES X|S" : L"PC", TypeRole::Caps, mark, HeaderTop + 13, 160, Palette::TextSecondary);
         // The tabs, with the bumpers that switch them at their ends.
         const std::vector<std::wstring_view> tabs{Tr(T::TabHome), Tr(T::TabLibrary), Tr(T::TabSettings)};
@@ -1538,7 +1541,9 @@ private:
     void DrawUpdateGuide(const ConfigurationPanel& configuration, const Updates::Snapshot& update) {
         const auto& network = configuration.network;
         const bool code = network.running && !network.code_expired && network.code.size() == 4;
-        Type(L"J A D Y X", TypeRole::HeadlineSmall, 80, 44, 400, Palette::Text);
+        const float grunge = MeasureType(L"GRUNGE", TypeRole::HeadlineSmall);
+        Type(L"GRUNGE", TypeRole::HeadlineSmall, 80, 44, grunge + 4, Palette::Text);
+        Type(L"BOX", TypeRole::HeadlineSmall, 80 + grunge + 1, 44, 120, Palette::Accent);
         const std::wstring installed{winrt::to_hstring(Updates::FormatVersion(update.installed))};
         const std::wstring incoming = update.release ?
             std::wstring{winrt::to_hstring(Updates::FormatVersion(update.release->version))} : installed;
@@ -1623,7 +1628,7 @@ private:
         const float kicker_width = MeasureType(kicker, TypeRole::Caps);
         Type(kicker, TypeRole::Caps, Margin, 92, kicker_width + 4, Palette::TextSecondary);
         Type(L"·", TypeRole::Label, Margin + kicker_width + 12, 92, 12, Palette::TextSecondary, 0.6f);
-        Type(L"Jadyx " + version_text, TypeRole::Label, Margin + kicker_width + 28, 92, 300, Palette::TextHint);
+        Type(L"GrungeBOX " + version_text, TypeRole::Label, Margin + kicker_width + 28, 92, 300, Palette::TextHint);
         // The categories.
         static constexpr std::array<ConfigurationIcon, HomeRowCount> icons{
             ConfigurationIcon::Settings, ConfigurationIcon::Display, ConfigurationIcon::Controller,

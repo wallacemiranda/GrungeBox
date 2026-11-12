@@ -70,8 +70,6 @@ struct LaunchConfig {
     std::string library_pick;
     bool output_4k = false;
     bool output_1080p = false;
-    /// "output=native": the Series S presents at the TV's full mode too (see SeriesSMaxHeight).
-    bool output_native = false;
     std::optional<Jadyx::Upscaling> upscaling;
     std::optional<bool> frame_gen;
 };
@@ -180,7 +178,6 @@ LaunchConfig ReadLaunchConfig(const std::filesystem::path& install) {
         else if (line.starts_with("library_pick=")) cfg.library_pick = line.substr(13);
         else if (line == "output=4k") cfg.output_4k = true;
         else if (line == "output=1080p") cfg.output_1080p = true;
-        else if (line == "output=native") cfg.output_native = true;
         // The same keys the boot reads (BootConfig), here only for the output size.
         else if (line.starts_with("upscaling=")) cfg.upscaling = Jadyx::ParseUpscaling(line.substr(10));
         else if (line == "frame_gen=off") cfg.frame_gen = false;
@@ -190,31 +187,9 @@ LaunchConfig ReadLaunchConfig(const std::filesystem::path& install) {
     return cfg;
 }
 
-// GrungeBOX: the Series S GPU (4 TFLOPS, a third of the Series X) pays for every pixel FSR writes.
-// On a 4K TV a 2160p swapchain costs it 2.25 times the FSR, sharpening and present work of 1440p,
-// the resolution that console is built for, and its display scaler takes 1440p to the TV for free.
-// The game's own render resolution is unchanged: only the upscale target is capped.
-constexpr u32 SeriesSMaxHeight = 1440;
-
-/// Whether this console is an Xbox Series S ("Xbox Series S" in AnalyticsInfo.DeviceForm).
-/// Anything it cannot tell is treated as not one, which keeps the previous behaviour.
-bool IsXboxSeriesS() {
-    static const bool series_s = [] {
-        try {
-            const std::wstring form{Windows::System::Profile::AnalyticsInfo::DeviceForm()};
-            WriteDiag("device form: " + winrt::to_string(form));
-            return form.find(L"Series S") != std::wstring::npos;
-        } catch (...) {
-            return false;
-        }
-    }();
-    return series_s;
-}
-
 // The swapchain the size of the TV's current mode (3840x2160 on a 4K TV); the
-// window's own size (1920x1080 on the console) when the mode is not larger. On
-// a Series S it stops at 1440p unless `native` (boot.cfg output=4k / output=native).
-Jadyx::BootSurface ScreenSurface(const Jadyx::BootSurface& surface, u32 session, bool native = false) {
+// window's own size (1920x1080 on the console) when the mode is not larger.
+Jadyx::BootSurface ScreenSurface(const Jadyx::BootSurface& surface, u32 session) {
     Jadyx::BootSurface screen = surface;
     if (surface.core_window == nullptr) return screen;
     try {
@@ -224,14 +199,6 @@ Jadyx::BootSurface ScreenSurface(const Jadyx::BootSurface& surface, u32 session,
         if (mode && mode.ResolutionWidthInRawPixels() > surface.width) {
             screen.width = mode.ResolutionWidthInRawPixels();
             screen.height = mode.ResolutionHeightInRawPixels();
-            if (!native && screen.height > SeriesSMaxHeight && IsXboxSeriesS()) {
-                screen.width = static_cast<u32>(u64{screen.width} * SeriesSMaxHeight / screen.height);
-                screen.height = SeriesSMaxHeight;
-                if (session == 1) {
-                    WriteDiag("output: Series S, FSR target capped at " + std::to_string(screen.width) +
-                              "x" + std::to_string(screen.height) + " (output=native turns it off)");
-                }
-            }
         } else if (session == 1) {
             WriteDiag("output: the display mode is not larger than " +
                       std::to_string(surface.width) + "x" + std::to_string(surface.height));
@@ -259,7 +226,7 @@ Jadyx::BootSurface ChooseGameSurface(const Jadyx::BootSurface& surface, const Ja
             library_program_id != 0 ? Jadyx::LoadGameGraphics(library_program_id) : Jadyx::GameGraphics{});
         if (cfg.upscaling) graphics.upscaling = *cfg.upscaling;
         if (cfg.frame_gen) graphics.frame_gen = *cfg.frame_gen;
-        const Jadyx::BootSurface screen = ScreenSurface(surface, session, cfg.output_native);
+        const Jadyx::BootSurface screen = ScreenSurface(surface, session);
         game_surface.plain_width = surface.width;
         game_surface.plain_height = surface.height;
         game_surface.screen_width = screen.width;
@@ -289,7 +256,7 @@ bool ChooseLaunch(const Jadyx::BootSurface& surface, u32 session, std::string& l
         // test runs. 1080p is a fixed swapchain on high-DPI PC screens; the present
         // stretches it.
         Jadyx::BootSurface library_surface = surface;
-        if (cfg.output_4k) library_surface = ScreenSurface(surface, session, true);
+        if (cfg.output_4k) library_surface = ScreenSurface(surface, session);
         if (cfg.output_1080p) library_surface = {surface.core_window, 1920, 1080};
 
         if (cfg.show_library) {

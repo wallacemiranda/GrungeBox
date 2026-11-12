@@ -21,16 +21,6 @@ A verificação automática de atualizações do Jadyx está desativada.
 O código original e seus créditos estão preservados abaixo. A licença permanece
 GPL-3.0-or-later.
 
-### Ajustes para o Xbox Series S
-
-No Series S conectado a uma TV 4K, o upscale FSR passa a gerar a imagem em 1440p, e o
-console a amplia para 4K. A resolução interna do jogo não muda. Em 1440p o FSR, a
-nitidez e a apresentação processam 2,25 vezes menos pixels do que em 4K. Isso libera a
-GPU do Series S para o jogo.
-
-Para usar a saída 4K completa no Series S, adicione a linha `output=native` ao `boot.cfg`.
-O Series X continua com a saída na resolução da TV.
-
 ### Instalação sobre a versão anterior
 
 O pacote mantém a identidade interna `Jadyx` / `CN=JadyxDev`. O GrungeBOX instala por cima
@@ -45,8 +35,8 @@ baixe o artefato `jadyx-package`, que contém o APPX, a dependência VCLibs e o
 certificado público. Certificados privados e senhas nunca devem ser publicados.
 
 Para disponibilizar os arquivos na página **Releases**, abra **Actions > Release >
-Run workflow**, selecione `main` e informe `0.3.12.2` em **version** para a primeira
-publicação do GrungeBOX. O workflow compila, assina e publica o APPX e suas dependências quando
+Run workflow**, selecione `main` e informe a versão do `AppxManifest.xml` (por exemplo,
+`0.3.12.3`) em **version**. O workflow compila, assina e publica o APPX e suas dependências quando
 todas as etapas terminarem com sucesso. A opção **prerelease** marca a versão como
 teste. Nas próximas versões, atualize primeiro a versão do manifesto e a lista do
 formulário de bugs com o comando abaixo, publique essas alterações e execute o
